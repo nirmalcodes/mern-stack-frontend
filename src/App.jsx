@@ -5,7 +5,7 @@ import { Layout } from './components'
 function App() {
     return (
         <>
-            <div className="min-h-screen bg-[#f1f1f1] flex flex-col">
+            <div className="flex min-h-screen flex-col bg-[#f1f1f1]">
                 <Suspense fallback={'Loading...'}>
                     <Layout>
                         {/* <Routes></Routes> */}

@@ -6,7 +6,7 @@ const Layout = ({ children }) => {
         <>
             <div className="">
                 <Navbar />
-                <div className="container mx-auto bg-sky-300 flex-1">
+                <div className="container mx-auto flex-1 bg-sky-300">
                     {children}
                 </div>
             </div>

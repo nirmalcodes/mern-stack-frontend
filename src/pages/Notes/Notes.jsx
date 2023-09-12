@@ -57,14 +57,14 @@ const Notes = () => {
     return (
         <>
             <div className="mx-auto w-[80%] p-8">
-                <div className="grid grid-cols-4 mb-8 gap-4 ">
+                <div className="mb-8 grid grid-cols-4 gap-4 ">
                     {workouts && workouts.length > 0 ? (
                         workouts.map((workout) => (
                             <div
-                                className="mb-4 bg-white shadow-md px-4 py-2 rounded"
+                                className="mb-4 rounded bg-white px-4 py-2 shadow-md"
                                 key={workout?._id}
                             >
-                                <h4 className="text-xl mb-2 font-medium">
+                                <h4 className="mb-2 text-xl font-medium">
                                     {workout?.title}
                                 </h4>
                                 <p className="font-medium">
@@ -73,10 +73,10 @@ const Notes = () => {
                                 <p className="font-medium">
                                     Load: {workout?.load}
                                 </p>
-                                <p className="text-sm mt-2">
+                                <p className="mt-2 text-sm">
                                     {workout?.createdAt}
                                 </p>
-                                <p className="text-sm mt-2">{workout?._id}</p>
+                                <p className="mt-2 text-sm">{workout?._id}</p>
                             </div>
                         ))
                     ) : (
