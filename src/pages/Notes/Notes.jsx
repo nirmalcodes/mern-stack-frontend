@@ -1,36 +1,41 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
+import { MasonryGrid, NoteCard } from '../../components'
+import DOMPurify from 'dompurify'
 
 const Notes = () => {
-    const [workouts, setWorkouts] = useState([])
-
-    useEffect(() => {
-        axios
-            .get('http://localhost:4000/api/workouts')
-            .then((res) => {
-                console.log(res.data)
-                setWorkouts(res.data)
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-    }, [])
-
+    const [notes, setNotes] = useState([])
     const [title, setTitle] = useState('')
-    const [load, setLoad] = useState('')
-    const [reps, setReps] = useState('')
+    const [content, setContent] = useState('')
     const [error, setError] = useState(null)
+
+    const contentEditableRef = useRef(null)
+
+    const handleContentChange = () => {
+        const selection = window.getSelection()
+        const range = selection.getRangeAt(0)
+        setContent(contentEditableRef.current.innerHTML)
+        selection.removeAllRanges()
+        selection.addRange(range)
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        const workout = { title, load, reps }
+        // Clean up the content before saving
+        const cleanedContent = content
+            .replace(/<div>/g, '\n')
+            .replace(/<br>/g, '')
+            .replace(/<\/div>/g, '')
+
+        const note = { title, content: cleanedContent }
+        // const note = { title, content }
 
         try {
             // Use Axios for the POST request
             const response = await axios.post(
-                'http://localhost:4000/api/workouts',
-                workout,
+                'https://kkbrnh26-5050.asse.devtunnels.ms/api/notes',
+                note,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -41,86 +46,99 @@ const Notes = () => {
             if (response.status === 200) {
                 setError(null)
                 setTitle('')
-                setLoad('')
-                setReps('')
+                setContent('')
                 console.info('Data added successfully!', response.data)
             }
         } catch (error) {
             // console.log(error)
             setError(
                 error.response.data.error ||
-                    'An error occurred while adding the workout.'
+                    'An error occurred while adding the note.'
             )
             console.error('Data add failed !', error.response.data.error)
         }
     }
+
+    // Function to sanitize user-generated HTML content using DOMPurify
+    const sanitizeHTML = (dirtyHTML) => {
+        return DOMPurify.sanitize(dirtyHTML)
+    }
+
+    const breakpoints = {
+        default: 6,
+        1200: 5,
+        1024: 4,
+        768: 3,
+        700: 2,
+        320: 1,
+    }
+
+    useEffect(() => {
+        axios
+            .get('https://kkbrnh26-5050.asse.devtunnels.ms/api/notes')
+            .then((res) => {
+                console.log(res.data)
+                setNotes(res.data)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }, [])
+
     return (
         <>
-            <div className="mx-auto w-[80%] p-8">
-                <div className="mb-8 grid grid-cols-4 gap-4 ">
-                    {workouts && workouts.length > 0 ? (
-                        workouts.map((workout) => (
-                            <div
-                                className="mb-4 rounded bg-white px-4 py-2 shadow-md"
-                                key={workout?._id}
-                            >
-                                <h4 className="mb-2 text-xl font-medium">
-                                    {workout?.title}
-                                </h4>
-                                <p className="font-medium">
-                                    Reps: {workout?.reps}
-                                </p>
-                                <p className="font-medium">
-                                    Load: {workout?.load}
-                                </p>
-                                <p className="mt-2 text-sm">
-                                    {workout?.createdAt}
-                                </p>
-                                <p className="mt-2 text-sm">{workout?._id}</p>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No data to show</p>
-                    )}
-                </div>
+            <MasonryGrid breakpoints={breakpoints} gutter={8} padding=".5em">
+                {notes && notes.length > 0 ? (
+                    notes.map((note) => (
+                        <NoteCard
+                            key={note?._id}
+                            // height={
+                            //     Math.floor(Math.random() * (450 - 150 + 1)) +
+                            //     150
+                            // }
+                            payload={note}
+                        />
+                    ))
+                ) : (
+                    <p>No data to show</p>
+                )}
+            </MasonryGrid>
 
-                <div className="">
-                    <form className="" onSubmit={handleSubmit}>
-                        <div>
-                            <label htmlFor="title">title </label>
-                            <input
-                                type="text"
-                                id="title"
-                                name="title"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="load">load </label>
-                            <input
-                                type="text"
-                                id="load"
-                                name="load"
-                                value={load}
-                                onChange={(e) => setLoad(e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="reps">reps </label>
-                            <input
-                                type="text"
-                                id="reps"
-                                name="reps"
-                                value={reps}
-                                onChange={(e) => setReps(e.target.value)}
-                            />
-                        </div>
+            <div className="">
+                <form className="" onSubmit={handleSubmit}>
+                    <div>
+                        <label htmlFor="title">title </label>
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                    </div>
 
-                        <button type="submit">Submit</button>
-                        {error && <div className="error">{error}</div>}
-                    </form>
-                </div>
+                    <div>
+                        <label htmlFor="load">content </label>
+                        <div
+                            aria-label="Note Content"
+                            className="border outline-none"
+                            contentEditable={true}
+                            aria-multiline={true}
+                            role="textbox"
+                            spellCheck={true}
+                            ref={contentEditableRef}
+                            onBlur={handleContentChange}
+                            dangerouslySetInnerHTML={{
+                                __html: sanitizeHTML(
+                                    content.replace(/\n/g, '<br>')
+                                ),
+                            }}
+                        />
+                    </div>
+
+                    <button type="submit">Submit</button>
+                    {error && <div className="error">{error}</div>}
+                </form>
             </div>
         </>
     )
