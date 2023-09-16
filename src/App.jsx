@@ -1,15 +1,17 @@
 import React, { Suspense } from 'react'
-import { Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { Layout } from './components'
+import { Notes } from './pages'
 
 function App() {
     return (
         <>
-            <div className="flex min-h-screen flex-col bg-[#f1f1f1]">
+            <div className="bg-[#f1f1f1]">
                 <Suspense fallback={'Loading...'}>
                     <Layout>
-                        {/* <Routes></Routes> */}
-                        hello
+                        <Routes>
+                            <Route path="/" element={<Notes />} />
+                        </Routes>
                     </Layout>
                 </Suspense>
             </div>
