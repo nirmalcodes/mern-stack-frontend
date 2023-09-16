@@ -50,7 +50,7 @@ const Notes = () => {
                 console.info('Data added successfully!', response.data)
             }
         } catch (error) {
-            // console.log(error)
+            // console.error(error)
             setError(
                 error.response.data.error ||
                     'An error occurred while adding the note.'
@@ -77,11 +77,11 @@ const Notes = () => {
         axios
             .get('https://kkbrnh26-5050.asse.devtunnels.ms/api/notes')
             .then((res) => {
-                console.log(res.data)
+                console.log('Respones: ', res.data)
                 setNotes(res.data)
             })
             .catch((error) => {
-                console.log(error)
+                console.error(error)
             })
     }, [])
 
