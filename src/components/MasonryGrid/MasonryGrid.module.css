@@ -17,8 +17,7 @@
 }
 
 /* Style your items */
-.my_masonry_grid_column > div {
-    /* change div to reference your elements you put in <Masonry> */
-    /* background: grey; */
+.my_masonry_grid_column > * {
+    /* change * to reference your elements you put in <Masonry> */
     margin-bottom: var(--gap);
 }

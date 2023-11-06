@@ -14,23 +14,15 @@ const NoteCard = ({ height, payload }) => {
     return (
         <>
             <div
-                className=" rounded-md bg-white px-3 py-2"
+                className="rounded-md bg-white px-3 py-2"
                 style={{
                     ...(height && { height: `${height}px` }),
                 }}
             >
                 <h4 className="mb-2 text-xl font-medium">{title}</h4>
-                {/* <h4 className="mb-2 text-lg">{payload?.content}</h4> */}
-                {/* <textarea
-                    name=""
-                    id=""
-                    cols="30"
-                    rows="10"
-                    value={payload?.content}
-                ></textarea> */}
                 <div
                     className="border-none outline-none"
-                    contentEditable={true}
+                    contentEditable={false}
                     aria-multiline={true}
                     role="textbox"
                     spellCheck={true}
